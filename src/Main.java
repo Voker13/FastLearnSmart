@@ -20,6 +20,8 @@ public class Main {
 
 	public static void main(String[] args) throws JAXBException, FileNotFoundException {
 
+		long time = System.currentTimeMillis();
+		
 		JAXBContext jc = JAXBContext.newInstance(Instance.class);
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		File xml = null;
@@ -44,8 +46,14 @@ public class Main {
 		generateAngleToLocation();
 		generateDistance0ToLocation();
 		
+		/**
+		 * tactic
+		 */
 		slicesPlusFarStrategy();
 
+		long time2 = System.currentTimeMillis();
+		System.out.println(time2-time);
+		
 	}
 
 	private static Tour findWorkDaySlicePlusFar(ArrayList<Location> locations) {
