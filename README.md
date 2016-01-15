@@ -1,0 +1,2 @@
+# FastLearnSmart
+TournamentClient
