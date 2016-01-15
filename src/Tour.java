@@ -56,7 +56,6 @@ public class Tour {
 					* Main.getGroundAirQuotient() / Main.getMeterPerSecond()) / 60 + location.getDuration();
 			tourStops.add(location);
 			locations.remove(Main.getIndex(locations, location));
-			Main.setLastLocation(location);
 			return true;
 		}
 		tourStops.add(Main.getDepot());

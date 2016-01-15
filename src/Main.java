@@ -17,7 +17,6 @@ public class Main {
 	private static Location depot;
 	private static int distanceAir = 0;
 	private static int distanceGround = 0;
-	private static Location lastLocation = null; // STILL NOT USED!!!
 
 	public static void main(String[] args) throws JAXBException, FileNotFoundException {
 
@@ -38,8 +37,10 @@ public class Main {
 		locations = (ArrayList<Location>) instance.getLocations();
 		locations.remove(0);
 
-		calculateAvarageSpeed();
+		edges = (ArrayList<Edge>) instance.getEdges();
+
 		calculateGroundToAirQuotient();
+		calculateAvarageSpeed();
 		generateAngleToLocation();
 		generateDistance0ToLocation();
 		
@@ -58,11 +59,9 @@ public class Main {
 	private static void slicesPlusFarStrategy() {
 		ArrayList<Tour> allToursSlicePlusFar = new ArrayList<Tour>();
 
-		ArrayList<Location> workCopy = locations;
-		while (!workCopy.isEmpty()) {
-			allToursSlicePlusFar.add(findWorkDaySlicePlusFar(workCopy));
+		while (!locations.isEmpty()) {
+			allToursSlicePlusFar.add(findWorkDaySlicePlusFar(locations));
 		}
-
 		int durationOverallSlicePlusFar = 0;
 		for (Tour tour : allToursSlicePlusFar) {
 			durationOverallSlicePlusFar += tour.getDuration();
@@ -128,6 +127,7 @@ public class Main {
 		double lat = (lat1 + lat2) / 2 * 0.01745;
 		float latDifference = (float) (111.3 * (lat1 - lat2));
 		float longDifference = (float) (111.3 * Math.cos(lat) * (long1 - long2));
+		
 		return (float) Math.sqrt(latDifference * latDifference + longDifference * longDifference);
 	}
 
@@ -179,10 +179,6 @@ public class Main {
 			}
 		}
 		return null;
-	}
-
-	public static void setLastLocation(Location lastLocation) {
-		Main.lastLocation = lastLocation;
 	}
 
 	public static Location getDepot() {
