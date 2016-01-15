@@ -31,6 +31,10 @@ public class Main {
 			xml = new File(args[0]);
 		}
 
+		long time3 = System.currentTimeMillis();
+		long timez = time3 - time;
+		System.out.println(timez);
+		
 		// load instance from File
 		instance = (Instance) unmarshaller.unmarshal(xml);
 
@@ -52,7 +56,7 @@ public class Main {
 		slicesPlusFarStrategy();
 
 		long time2 = System.currentTimeMillis();
-		System.out.println(time2-time);
+		System.out.println(time2-timez);
 		
 	}
 
