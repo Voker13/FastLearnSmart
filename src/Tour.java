@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class Tour {
 
 	private int duration = 0;
-	private int maxDuration = 480;
+	private static final int maxDuration = 480;
 	private ArrayList<Location> tourStops = new ArrayList<>();
 
 	public Tour() {

@@ -6,10 +6,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-
 public class Main {
 
-	private static int timePerWorkday = 480;
 	private static ArrayList<Location> locations;
 	private static Instance instance;
 	private static ArrayList<Edge> edges;
@@ -17,11 +15,13 @@ public class Main {
 	private static double kilometerPerHour;
 	private static double meterPerSecond;
 	private static Location depot;
-	private static Location lastLocation = null;
+	private static int distanceAir = 0;
+	private static int distanceGround = 0;
+	private static Location lastLocation = null; // STILL NOT USED!!!
 
 	public static void main(String[] args) throws JAXBException, FileNotFoundException {
-		JAXBContext jc = JAXBContext.newInstance(Instance.class);
 
+		JAXBContext jc = JAXBContext.newInstance(Instance.class);
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		File xml = null;
 		if (args.length == 0) {
@@ -32,17 +32,44 @@ public class Main {
 
 		// load instance from File
 		instance = (Instance) unmarshaller.unmarshal(xml);
-		
+
 		// save depot as special Location
 		depot = instance.getLocations().get(0);
-
 		locations = (ArrayList<Location>) instance.getLocations();
-
 		locations.remove(0);
 
+		calculateAvarageSpeed();
+		calculateGroundToAirQuotient();
 		generateAngleToLocation();
 		generateDistance0ToLocation();
+		
+		slicesPlusFarStrategy();
 
+	}
+
+	private static Tour findWorkDaySlicePlusFar(ArrayList<Location> locations) {
+		Tour tour = new Tour();
+		while (tour.addNextStopSlicePlusFar(locations)) {
+
+		}
+		return tour;
+	}
+
+	private static void slicesPlusFarStrategy() {
+		ArrayList<Tour> allToursSlicePlusFar = new ArrayList<Tour>();
+
+		ArrayList<Location> workCopy = locations;
+		while (!workCopy.isEmpty()) {
+			allToursSlicePlusFar.add(findWorkDaySlicePlusFar(workCopy));
+		}
+
+		int durationOverallSlicePlusFar = 0;
+		for (Tour tour : allToursSlicePlusFar) {
+			durationOverallSlicePlusFar += tour.getDuration();
+		}
+
+		System.err.println("SlicePlusFar Strategy: " + (allToursSlicePlusFar.size())
+				+ " Touren mit einer Gesamtfahrzeit von " + durationOverallSlicePlusFar + " Minuten");
 	}
 
 	public static Location findClosestLocation(Location location, ArrayList<Location> locations) {
@@ -63,6 +90,28 @@ public class Main {
 			}
 		}
 		return returnLocation;
+	}
+
+	private static void calculateAvarageSpeed() {
+		int time = 0;
+		for (int i = 0; i < locations.size(); i++) {
+			if (!(i == 0)) {
+				time += getEdge(0, i).getDuration();
+			}
+		}
+
+		kilometerPerHour = (distanceGround * 60) / (time);
+		meterPerSecond = kilometerPerHour / 3.6F;
+	}
+
+	private static void calculateGroundToAirQuotient() {
+		for (int i = 0; i < locations.size(); i++) {
+			if (!(i == 0)) {
+				distanceGround += getEdge(0, i).distance / 1000;
+				distanceAir += getDistance(depot, locations.get(i));
+			}
+		}
+		groundAirQuotient = (float) distanceGround / distanceAir;
 	}
 
 	public static float getDistance(Location location1, Location location2) {
@@ -123,10 +172,19 @@ public class Main {
 		return -1;
 	}
 
+	private static Edge getEdge(int one, int two) {
+		for (Edge edge : edges) {
+			if ((edge.from == one && edge.to == two) || (edge.from == two && edge.to == one)) {
+				return edge;
+			}
+		}
+		return null;
+	}
+
 	public static void setLastLocation(Location lastLocation) {
 		Main.lastLocation = lastLocation;
 	}
-	
+
 	public static Location getDepot() {
 		return depot;
 	}
