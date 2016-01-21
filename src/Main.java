@@ -20,8 +20,6 @@ public class Main {
 
 	public static void main(String[] args) throws JAXBException, FileNotFoundException {
 
-		long time = System.currentTimeMillis();
-		
 		JAXBContext jc = JAXBContext.newInstance(Instance.class);
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		File xml = null;
@@ -30,14 +28,12 @@ public class Main {
 		} else {
 			xml = new File(args[0]);
 		}
-
-		long time3 = System.currentTimeMillis();
-		long timez = time3 - time;
-		System.out.println(timez);
 		
 		// load instance from File
 		instance = (Instance) unmarshaller.unmarshal(xml);
 
+		long time = System.currentTimeMillis();
+		
 		// save depot as special Location
 		depot = instance.getLocations().get(0);
 		locations = (ArrayList<Location>) instance.getLocations();
@@ -56,7 +52,7 @@ public class Main {
 		slicesPlusFarStrategy();
 
 		long time2 = System.currentTimeMillis();
-		System.out.println(time2-timez);
+		System.out.println(time2-time+"ohne xml");
 		
 	}
 
