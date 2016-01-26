@@ -6,7 +6,6 @@ public class Tour {
 
 	private int duration = 0;
 	private static final int maxDuration = 480;
-	private int interlaceAt; //interlaceAt is the position in the tour, witch should become the new FirstStop of the tour
 	private ArrayList<Location> tourStops = new ArrayList<>();
 
 	public Tour() {
@@ -24,11 +23,6 @@ public class Tour {
 	public int getMaxDuration() {
 		return maxDuration;
 	}
-	
-	public void addDuration(Location location) {
-		System.out.println((Main.getDistance(location, tourStops.get(tourStops.size() - 1)) * 1000F * Main.getGroundAirQuotient() / Main.getMeterPerSecond()) / 60 + location.getDuration());
-		this.duration += (Main.getDistance(location, tourStops.get(tourStops.size() - 1)) * 1000F * Main.getGroundAirQuotient() / Main.getMeterPerSecond()) / 60 + location.getDuration();
-	}
 
 	// public void setMaxDuration(int maxDuration) {
 	// this.maxDuration = maxDuration;
@@ -42,13 +36,6 @@ public class Tour {
 	// this.tourStops = tourStops;
 	// }
 	
-	public int getInterlaceAt() {
-		return interlaceAt;
-	}
-
-	public void setInterlaceAt(int interlaceAt) {
-		this.interlaceAt = interlaceAt;
-	}
 	
 	public void setTourStops(ArrayList<Location> tourStops) {
 		this.tourStops = tourStops;
@@ -64,62 +51,6 @@ public class Tour {
 		return returnString;
 	}
 	
-	/**
-     * A method to prove if there is a interlace in a Tour, causing unnecessary extra time.
-     * Sets the interlaceAt of this.tour.
-     * Prints the place of the Tour, where the interlace is.
-     * 
-     * @return returns true if there is a interlace, else false
-     */
-    public boolean interlace() {
-    	if (this.getTourStops().size() <= 2) {
-    		System.err.println("interlace: tour.getTourStops().size() <= 2 !");
-    		return false;
-    	}
-    	double angleOfFirstStop = this.getTourStops().get(1).getAngle();
-    	if (angleOfFirstStop < this.getTourStops().get(2).getAngle()) {
-    		for (int i=2; i<this.getTourStops().size(); i++) {
-    			if (!this.getTourStops().get(i).equals(Main.getDepot()) && this.getTourStops().get(i).getAngle() < angleOfFirstStop) {
-//    				System.out.println("interlace from position "+(i-1)+" to "+i);
-//    				System.out.println("The new Startlocation of this Tour should be @"+(i-1));
-    				this.setInterlaceAt(i-1);
-    				return true;
-    			}
-    		}
-    	}
-    	else if (angleOfFirstStop > this.getTourStops().get(2).getAngle()) {
-    		for (int i=2; i<this.getTourStops().size(); i++) {
-    			if (!this.getTourStops().get(i).equals(Main.getDepot()) && this.getTourStops().get(i).getAngle() > angleOfFirstStop) {
-//    				System.out.println("interlace from position "+(i-1)+" to "+i);
-//    				System.out.println("The new Startlocation of this Tour should be @"+(i-1));
-    				this.setInterlaceAt(i-1);
-    				return true;
-    			}
-    		}
-    	}
-    	return false; // if here are no interlaces
-    }
-    
-    public void solveInterlace() {
-    	ArrayList<Location> zwischenspeicherLocations = new ArrayList<>();
-    	zwischenspeicherLocations.add(Main.getDepot());
-    	for (int i=this.getInterlaceAt(); i>=1; i--) {
-    		zwischenspeicherLocations.add(this.getTourStops().get(i));
-    	}
-    	for (int i=this.getInterlaceAt()+1; i<this.getTourStops().size(); i++) {
-    		zwischenspeicherLocations.add(this.getTourStops().get(i));
-    	}
-    	this.setTourStops(zwischenspeicherLocations);
-    }
-    
-    public void addDurationEntireTour() {
-    	System.out.println(">>>DURATION_OLD: "+this.duration);
-    	this.duration = 0;
-    	for (int i=1; i<this.getTourStops().size()-1; i++) {
-    		this.addDuration(this.getTourStops().get(i));
-    	}
-    	System.out.println(">>>DURATION_NEW: "+this.duration);
-    }
 
 	public boolean addStopDepot(Location location, ArrayList<Location> locations) {
 		if (duration

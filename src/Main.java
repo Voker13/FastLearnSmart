@@ -61,10 +61,7 @@ public class Main {
 		while (tour.addNextStopSlicePlusFar(locations)) {
 
 		}
-		if (tour.interlace()) {
-			tour.solveInterlace();
-			tour.addDurationEntireTour();
-		}
+		
 		return tour;
 	}
 
