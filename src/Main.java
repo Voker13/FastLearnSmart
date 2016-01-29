@@ -19,7 +19,7 @@ public class Main {
 	private static int distanceGround = 0;
 
 	public static void main(String[] args) throws JAXBException, FileNotFoundException {
-
+		
 		JAXBContext jc = JAXBContext.newInstance(Instance.class);
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		File xml = null;
@@ -49,34 +49,40 @@ public class Main {
 		/**
 		 * tactic
 		 */
-		slicesPlusFarStrategy();
+		farToCloseInterlaceStrategy();
 
 		long time2 = System.currentTimeMillis();
-		System.out.println(time2-time+"ohne xml");
+		System.out.println();
+		System.out.println("Time without loading: "+(time2-time)+"ms");
 		
 	}
 
-	private static Tour findWorkDaySlicePlusFar(ArrayList<Location> locations) {
+	private static Tour findWorkDayFarToCloseInterlace(ArrayList<Location> locations) {
 		Tour tour = new Tour();
 		while (tour.addNextStopSlicePlusFar(locations)) {
 
 		}
-		
+		// TODO interlace on/off
+
+		if (tour.interlace()) {
+			tour.solveInterlace();
+			tour.addDurationEntireTour();
+		}
 		return tour;
 	}
 
-	private static void slicesPlusFarStrategy() {
-		ArrayList<Tour> allToursSlicePlusFar = new ArrayList<Tour>();
+	private static void farToCloseInterlaceStrategy() {
+		ArrayList<Tour> allToursFarToCloseInterlace = new ArrayList<Tour>();
 
 		while (!locations.isEmpty()) {
-			allToursSlicePlusFar.add(findWorkDaySlicePlusFar(locations));
+			allToursFarToCloseInterlace.add(findWorkDayFarToCloseInterlace(locations));
 		}
 		int durationOverallSlicePlusFar = 0;
-		for (Tour tour : allToursSlicePlusFar) {
+		for (Tour tour : allToursFarToCloseInterlace) {
 			durationOverallSlicePlusFar += tour.getDuration();
 		}
 
-		System.err.println("SlicePlusFar Strategy: " + (allToursSlicePlusFar.size())
+		System.err.println("SlicePlusFar Strategy: " + (allToursFarToCloseInterlace.size())
 				+ " Touren mit einer Gesamtfahrzeit von " + durationOverallSlicePlusFar + " Minuten");
 	}
 
